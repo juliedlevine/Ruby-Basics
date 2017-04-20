@@ -334,3 +334,147 @@ business.each do |key, value|
     puts "The hash key is #{key} and the value is #{value}."
 end
 ```
+
+#### Objects
+Everything in Ruby is an object. You can call methods on objects.
+
+#### Classes
+``` Ruby
+class Name
+    class Name
+        # Attribute reader method - ruby creates a method which returns the variable.
+        attr_reader :title, :first_name, :middle_name, :last_name
+        def initialize(title, first_name, middle_name, last_name)
+            # instance variable will be available to each method in the class
+            @title = title
+            @first_name = first_name
+            @middle_name = middle_name
+            @last_name = last_name
+        end
+    end
+
+    name = Name.new("Ms.", "Julie", "Marie", "Dyer")
+    puts name.title + " " + name.first_name + " " + name.middle_name + " " + name.last_name
+```
+
+to_s method
+Use this to set a name for the object. This is what will be returned when you try to print just the class without any methods on it.
+``` Ruby
+def to_s
+    name_with_title
+end
+```
+
+
+#### Boolean precedence
+Order in which boolean statements are evaluated matters.
+```Ruby
+1 && 2 == 1 && 2
+# this returns false, because Ruby interprets this as:
+1 && (2 == 1) && 2
+# to correct this you need to write it like this, because parenthesis has higher precedence
+(1 && 2) == (1 && 2)
+# now this will return true
+```
+
+#### Conditional Assignment
+Want to define a variable but the variable may or may not exist.
+``` Ruby
+name = "Julie"
+if defined?(name)
+    name
+else
+    name = "Andrew"
+end
+
+# This is the same as. Andrew will only be assigned if the variable name does not exist.
+name = "Julie"
+name ||= "Andrew"
+```
+
+
+#### Blocks
+Implict return in blocks:
+```Ruby
+arr = [1, 2, 232, 234, 23, 1]
+arr.length.times do |i|
+    puts "Hello world!"
+    puts i
+    # implicit return - this returns the last item of the block, don't use the return keyword
+    true
+end
+```
+
+Running statements within blocks. If you call yield without a block you will get an error.
+```Ruby
+def block_method
+    puts "This is the first line in block_method"
+    # Tells ruby to execute the code in the block
+    yield
+end
+
+block_method do
+    # This is the block
+    puts "This statement is called from the block."
+end
+```
+
+Kind of like callbacks in JavaScript
+```Ruby
+def get_name
+    print "Enter your name: "
+    name = gets.chomp
+    yield name
+    # implicit return of the name variable
+    name
+end
+# My name now gets assigned to name, because name is returned from calling get_name
+my_name = get_name do |name|
+    puts "That's a cool name, #{name}!"
+end
+```
+
+Another way to write blocks
+```Ruby
+def get_name(prompt, &block)
+    print prompt + ": "
+    name = gets.chomp
+    block.call(name)
+    # implicit return of the name variable
+    name
+end
+
+# My name now gets assigned to name, because name is returned from calling get_name
+my_name = get_name("Enter your name") do |name|
+    puts "That's a cool name, #{name}!"
+end
+```
+
+#### Blocks like higher order functions
+These work with hashes as well, just instead of passing in one item you pass in key, value. <br>
+map - returns a new array with the block executed over each item in the array
+```Ruby
+arr = [1, 2, 3, 4, 5, 6, 7]
+mapped = arr.map do |item|
+    item * 2
+end
+puts mapped
+```
+
+reject - returns only items which pass the condition in the block
+```Ruby
+arr = [1, 2, 3, 4, 5, 6, 7]
+odds = arr.reject do |item|
+    item % 2 == 0
+end
+puts odds
+```
+
+select - returns a new array containing all items which return true from the block
+```Ruby
+arr = [1, 2, 3, 4, 5, 6, 7]
+even = arr.select do |num|
+    num % 2 == 0
+end
+puts even.inspect
+```
