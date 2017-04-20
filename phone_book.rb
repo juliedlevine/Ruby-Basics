@@ -1,13 +1,12 @@
+require "yaml"
+
 class PhoneBook
     attr_reader :name
 
     def initialize(name)
         @name = name
-        @entries = [
-            {name: "Julie", number: "504-616-9063"},
-            {name: "Emily", number: "404-223-1523"},
-            {name: "Tom", number: "202-423-2342"},
-        ]
+        @entries = []
+        open
     end
 
     def search
@@ -55,6 +54,19 @@ class PhoneBook
         end
     end
 
+    def open
+        if File.exist?("contacts.yml")
+            @entries = YAML.load_file("contacts.yml")
+        end
+    end
+
+    def save
+        File.open("contacts.yml", "w") do |file|
+            file.write(@entries.to_yaml)
+        end
+        puts "Contacts saved to contacts.yml file."
+    end
+
     def print_instructions
         puts <<-INSTRUCTIONS
 ---------------------
@@ -87,6 +99,7 @@ INSTRUCTIONS
             elsif answer == 5
                 print_instructions
             elsif answer == 6
+                save
                 puts "Bye!"
                 break
             end
